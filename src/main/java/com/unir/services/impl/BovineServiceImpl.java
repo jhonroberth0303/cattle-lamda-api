@@ -33,7 +33,7 @@ public class BovineServiceImpl implements BovineService {
 
     @Override
     public List<BovineDTO> findByGender(String gender) {
-        return List.of();
+        return bovineRepository.findByGender(gender).stream().map(bovineMapper::toDTO).collect(Collectors.toList());
     }
 
     @Override

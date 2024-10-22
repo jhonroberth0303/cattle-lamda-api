@@ -38,6 +38,6 @@ public class CattleHandler implements RequestHandler<Map<String,Object>, List<Bo
         String gender = (String) pathParameters.get("gender");
         logger.log("gender parameter: " + gender);
 
-        return bovineService.findAll(context);
+        return bovineService.findByGender(gender);
     }
 }

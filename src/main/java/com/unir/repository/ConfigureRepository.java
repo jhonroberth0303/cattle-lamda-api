@@ -6,7 +6,13 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
+import com.unir.entities.Bovine;
 import com.unir.util.LambdaContext;
+import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
+import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
+import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 
 public class ConfigureRepository {
 
@@ -14,6 +20,8 @@ public class ConfigureRepository {
     protected DynamoDBMapper mapper;
     protected DynamoDB dynamoDB;
     protected LambdaContext lambdaContext;
+    protected DynamoDbEnhancedClient enhancedClient;
+    protected DynamoDbTable<Bovine> table;
 
     public ConfigureRepository(String tableName) {
 
@@ -26,6 +34,12 @@ public class ConfigureRepository {
                 .withRegion(Regions.US_EAST_1).build();
         this.mapper = new DynamoDBMapper(client, mapperConfig);
         this.dynamoDB = new DynamoDB(client);
+
+        // Create a DynamoDbEnhancedClient and use the DynamoDbClient object
+        Region region = Region.US_EAST_1;
+        DynamoDbClient ddb = DynamoDbClient.builder().region(region).build();
+        enhancedClient = DynamoDbEnhancedClient.builder().dynamoDbClient(ddb).build();
+        table = enhancedClient.table(tableName, TableSchema.fromBean(Bovine.class));
 
     }
 
